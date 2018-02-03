@@ -1,21 +1,26 @@
+
 pipeline {
-  environment {
-    M3_HOME = "/usr/share/maven"
-    M2_HOME = "/usr/share/maven"
-  }
-  agent none
-  tools {
-      maven 'Maven 3.3.9'
-      jdk 'jdk8'
-  }
-  stages {
-    stage('Send Slack Notifcation') {
-        steps {
-            slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-        }
+    agent none
+
+    environment {
+        MAVEN_OPTS = "-Xmx1024m"
     }
-    stage("docker") {
-        agent docker: "maven:3.3.9-jdk-8"
+
+    parameters {
+        stringParam(defaultValue: "install", description: "What Maven goal to call", name: "MAVEN_GOAL")
+    }
+    
+    jobProperties {
+        buildDiscarder(logRotator(numToKeepStr:'1'))
+    }
+    
+    triggers {
+        cron('@daily')
+    }
+
+    stages {
+        stage("Build") {
+            agent docker: "maven:3.3.9-jdk-8"
 
             steps {
                 checkout scm
@@ -28,32 +33,25 @@ pipeline {
                     junit '**/target/surefire-reports/*.xml'
                 }
             }
-    }
-    stage('verify') {
-      steps {
-          dir("spring-boot-package-war"){
-                sh 'mvn clean verify'
-          }
-      }
-    }
-    stage ('Build') {
-        steps {
-            sh 'mvn install'
         }
-        post {
-            success {
-                junit 'target/surefire-reports/**/*.xml'
-            }
-        }
-    }
-  }
-  post {
-    success {
-      slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
 
-    failure {
-      slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    postBuild {
+        always {
+            echo "Build done"
+        }
     }
-  }
+    
+    notifications {
+        success {
+            mail to: "abayer@cloudbees.com", subject: "Build Successful"
+        }
+        failure {
+            mail to: "abayer@cloudbees.com", subject: "Build Failed"
+        }
+        unstable {
+            mail to: "abayer@cloudbees.com", subject: "Build Unstable"
+        }
+    }
+
 }

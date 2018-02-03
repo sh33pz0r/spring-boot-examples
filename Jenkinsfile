@@ -9,11 +9,6 @@ pipeline {
             slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
     }
-    stage('Checkout') {
-        steps {
-            checkout scm
-        }
-    }
     stage('verify') {
       steps {
           dir("spring-boot-package-war"){

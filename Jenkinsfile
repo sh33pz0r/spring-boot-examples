@@ -14,6 +14,21 @@ pipeline {
             slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
     }
+    stage("Build") {
+        agent docker: "maven:3.3.9-jdk-8"
+
+            steps {
+                checkout scm
+                sh "mvn clean ${env.MAVEN_GOAL} -B -Dmaven.test.failure.ignore=true"
+            }
+
+            post {
+                success {
+                    archive "**/target/**/*.jar"
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+    }
     stage('verify') {
       steps {
           dir("spring-boot-package-war"){

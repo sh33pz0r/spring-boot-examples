@@ -1,57 +1,33 @@
-
-pipeline {
-    agent none
-
-    environment {
-        MAVEN_OPTS = "-Xmx1024m"
+tools { 
+        maven 'Maven 3.3.9' 
+        jdk 'jdk8' 
     }
 
-    parameters {
-        stringParam(defaultValue: "install", description: "What Maven goal to call", name: "MAVEN_GOAL")
-    }
-    
-    jobProperties {
-        buildDiscarder(logRotator(numToKeepStr:'1'))
-    }
-    
-    triggers {
-        cron('@daily')
-    }
+	properties([
+        disableConcurrentBuilds(),
+        parameters([
+                string(defaultValue: '', description: '', name: 'my_branch'),
+        ]),
+        pipelineTriggers([])
+])
 
-    stages {
-        stage("Build") {
-            agent docker: "maven:3.3.9-jdk-8"
+node("master") {
+	stage('Check-out') {
+            checkout([$class: 'GitSCM', branches: [[name: "master"]], doGenerateSubmoduleConfigurations: true, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "/home/ec2-user/WORKSPACE/"]], submoduleCfg: [], userRemoteConfigs: [[url: "git remote add origin https://github.com/ofirgut007/spring-boot-examples"]]])	
+	}
 
-            steps {
-                checkout scm
-                sh "mvn clean ${env.MAVEN_GOAL} -B -Dmaven.test.failure.ignore=true"
-            }
-
-            post {
-                success {
-                    archive "**/target/**/*.jar"
-                    junit '**/target/surefire-reports/*.xml'
-                }
-            }
-        }
+    stage('Build') {
+        try {
+            sh 'mvn -Dmaven.test.failure.ignore=true install' 
+	} catch (exc) {
+	    error "ERROR: Failed to checkout branch - ${params.my_branch}"
+	}
     }
+	stage ('test') {
+			junit 'target/surefire-reports/**/*.xml' 
+	}
+    stage('Deploy') {
+        
 
-    postBuild {
-        always {
-            echo "Build done"
-        }
     }
-    
-    notifications {
-        success {
-            mail to: "abayer@cloudbees.com", subject: "Build Successful"
-        }
-        failure {
-            mail to: "abayer@cloudbees.com", subject: "Build Failed"
-        }
-        unstable {
-            mail to: "abayer@cloudbees.com", subject: "Build Unstable"
-        }
-    }
-
 }

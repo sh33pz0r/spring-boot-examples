@@ -3,7 +3,7 @@ pipeline {
     M3_HOME = "/usr/share/maven"
     M2_HOME = "/usr/share/maven"
   }
-  agent { label 'slave' }
+  agent none
   tools {
       maven 'Maven 3.3.9'
       jdk 'jdk8'

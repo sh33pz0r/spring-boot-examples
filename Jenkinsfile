@@ -11,7 +11,7 @@ pipeline {
     }
     stage('Checkout') {
         steps {
-            git https://github.com/sizgiyaev/spring-boot-examples.git
+            checkout scm
         }
     }
     stage('verify') {

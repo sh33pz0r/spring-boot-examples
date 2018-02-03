@@ -1,15 +1,3 @@
-tools { 
-        maven 'Maven 3.3.9' 
-        jdk 'jdk8' 
-    }
-
-	properties([
-        disableConcurrentBuilds(),
-        parameters([
-                string(defaultValue: '', description: '', name: 'my_branch'),
-        ]),
-        pipelineTriggers([])
-])
 
 node("slave") {
 	stage('Check-out') {

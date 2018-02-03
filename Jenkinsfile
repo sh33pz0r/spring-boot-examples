@@ -14,7 +14,7 @@ pipeline {
             slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
     }
-    stage("Build") {
+    stage("docker") {
         agent docker: "maven:3.3.9-jdk-8"
 
             steps {

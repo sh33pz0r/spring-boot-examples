@@ -13,6 +13,7 @@ pipeline {
       steps {
           dir("spring-boot-package-war"){
               sh 'pwd'
+              sh 'M2_HOME=/usr/share/maven/'
               sh 'mvn clean verify'
           }
       }

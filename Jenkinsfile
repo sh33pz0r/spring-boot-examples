@@ -2,7 +2,8 @@ pipeline {
   agent { label 'slave' }
   tools {
       maven 'Maven 3.3.9'
-      }
+      jdk 'jdk8'
+  }
   stages {
     stage('Send Slack Notifcation') {
         steps {
@@ -12,9 +13,11 @@ pipeline {
     stage('verify') {
       steps {
           dir("spring-boot-package-war"){
-              sh 'pwd'
-              sh 'M2_HOME=/usr/share/maven/'
-              sh 'mvn clean verify'
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                '''
+                sh 'mvn clean verify'
           }
       }
     }

@@ -14,35 +14,36 @@ pipeline {
     //         slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     //     }
     // }
-    stage('Verify') {
-      steps {
-          dir("spring-boot-package-war"){
-              sh 'echo $PATH'  
-              sh 'mvn clean verify'
-          }
-      }
-    }
-    stage ('Build') {
-        steps {
-          dir("spring-boot-package-war"){
-            sh 'mvn clean install'
-          }
-        }
-    }
- 	stage ('Test') {
-      steps {
-         dir("spring-boot-package-war"){
-             junit 'target/surefire-reports/**/*.xml'
-         }
-      }
-    }
+    // stage('Verify') {
+    //   steps {
+    //       dir("spring-boot-package-war"){
+    //           sh 'echo $PATH'  
+    //           sh 'mvn clean verify'
+    //       }
+    //   }
+    // }
+    // stage ('Build') {
+    //     steps {
+    //       dir("spring-boot-package-war"){
+    //         sh 'mvn clean install'
+    //       }
+    //     }
+    // }
+ 	// stage ('Test') {
+    //   steps {
+    //      dir("spring-boot-package-war"){
+    //          junit 'target/surefire-reports/**/*.xml'
+    //      }
+    //   }
+    // }
     stage ('Build Docker Image') {
         steps {
-            script{
-                getPomVersion(env.workspace + "/spring-boot-package-war/pom.xml")
+            script {
+                  def pom = readMavenPom file: 'spring-boot-package-war/pom.xml'
+                  echo pom
             }
             sh 'env'
-              sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${env.VERSION} .'
+            sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${env.VERSION} .'
         }
     }
   }
@@ -55,11 +56,4 @@ pipeline {
       slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
   }
-}
-
-@NonCPS
-def getPomVerion(pomPath) {
-    def matcher = readFile(pomPath) =~ '<version>(.+?)</version>'
-    echo matcher
-    //matcher ? matcher[0][1] : null
 }

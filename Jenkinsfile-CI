@@ -1,3 +1,5 @@
+def pomVersion
+
 pipeline {
   environment {
     M3_HOME = "/usr/share/maven"
@@ -40,9 +42,9 @@ pipeline {
         steps {
             script {
                   def pom = readMavenPom file: 'spring-boot-package-war/pom.xml'
-                  def version = pom.version
-                  sh "docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${version}.war -t sizgiyaev/spring-boot-example:${version} ."
-            } 
+                  pomVersion = pom.version
+            }
+            sh "docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${pomVersion}.war -t sizgiyaev/spring-boot-example:${pomVersion} ."
         }
     }
   }

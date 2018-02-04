@@ -29,9 +29,11 @@ pipeline {
         }
     }
  	stage ('test') {
+      steps {
          dir("spring-boot-package-war"){
              junit 'target/surefire-reports/**/*.xml'
          }
+      }
      }
     }
   }

@@ -17,7 +17,8 @@ pipeline {
     stage('verify') {
       steps {
           dir("spring-boot-package-war"){
-                sh 'mvn clean verify'
+              sh 'echo $PATH'  
+              sh 'mvn clean verify'
           }
       }
     }

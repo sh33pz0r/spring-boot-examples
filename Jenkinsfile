@@ -13,6 +13,7 @@ pipeline {
           image 'maven:3.3.9-jdk-8'
           args '-H=172.31.35.217:2375'
       }
+  }
   stages {
     stage('Send Slack Notifcation') {
         steps {

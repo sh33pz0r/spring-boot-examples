@@ -24,7 +24,8 @@ pipeline {
     }
     stage ('Build') {
         steps {
-            sh 'mvn install'
+          dir("spring-boot-package-war"){
+            sh 'mvn clean install'
         }
         post {
             success {

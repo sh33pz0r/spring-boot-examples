@@ -10,11 +10,16 @@ pipeline {
 //   }
   agent { docker 'maven:3.5.2-jdk-8' }
   stages {
-    stage('Send Slack Notifcation') {
-        steps {
+    post {
+        always {
             slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
     }
+    // stage('Send Slack Notifcation') {
+    //     steps {
+    //         slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    //     }
+    // }
     stage('Verify') {
       steps {
           dir("spring-boot-package-war"){

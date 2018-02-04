@@ -50,7 +50,11 @@ pipeline {
     }
     stage ('Push Docker Image') {
         steps {
-            sh "docker push sizgiyaev/spring-boot-example:${tag}"
+            withCredentials([usernamePassword(credentialsId: 'docker_cloud', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                sh "docker push sizgiyaev/spring-boot-example:${tag}"
+            }
+            
         }
     }
   }

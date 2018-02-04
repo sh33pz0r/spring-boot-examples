@@ -12,17 +12,16 @@ pipeline {
       label 'docker-slave'
   }
   stages {
+    agent {
+        docker {
+            image 'maven:3.3.9-jdk-8'
+        }
     stage('Send Slack Notifcation') {
         steps {
             slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
     }
     stage('Verify') {
-      agent {
-          docker {
-              image 'maven:3.3.9-jdk-8'
-          }
-      }
       steps {
           dir("spring-boot-package-war"){
               sh 'echo $PATH'  
@@ -43,7 +42,8 @@ pipeline {
              junit 'target/surefire-reports/**/*.xml'
          }
       }
-     }
+    }
+    }
   }
   post {
     success {

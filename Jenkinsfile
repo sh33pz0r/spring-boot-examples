@@ -14,7 +14,7 @@ pipeline {
     //         slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     //     }
     // }
-    stage('verify') {
+    stage('Verify') {
       steps {
           dir("spring-boot-package-war"){
               sh 'echo $PATH'  
@@ -26,16 +26,16 @@ pipeline {
         steps {
           dir("spring-boot-package-war"){
             sh 'mvn clean install'
+          }
         }
     }
- 	stage ('test') {
+ 	stage ('Test') {
       steps {
          dir("spring-boot-package-war"){
              junit 'target/surefire-reports/**/*.xml'
          }
       }
      }
-    }
   }
 //   post {
 //     success {

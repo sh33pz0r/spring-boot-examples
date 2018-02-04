@@ -27,11 +27,9 @@ pipeline {
           dir("spring-boot-package-war"){
             sh 'mvn clean install'
         }
-        post {
-            success {
-                junit 'target/surefire-reports/**/*.xml'
-            }
-        }
+ 	  stage ('test') {
+      junit 'target/surefire-reports/**/*.xml'
+    }
         }
     }
   }

@@ -39,8 +39,11 @@ pipeline {
     }
     stage ('Build Docker Image') {
         steps {
-            sh 'env'
-            sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${env.POM_VERSION}.war -t sizgiyaev/spring-boot-example:${env.POM_VERSION} .'
+            script {
+                def pom = readMavenPom file: 'pom.xml'
+                def version = pom.version.replace("-SNAPSHOT", ".${currentBuild.number}")  
+            }
+            sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${pom.version} .'
         }
     }
   }

@@ -2,7 +2,6 @@ pipeline {
   environment {
     M3_HOME = "/usr/share/maven"
     M2_HOME = "/usr/share/maven"
-    VERSION = readMavenPom("spring-boot-package-war/pom.xml").getVersion()
   }
   agent { label 'slave' }
   tools {
@@ -39,7 +38,10 @@ pipeline {
     }
     stage ('Build Docker Image') {
         steps {
-              sh 'env'
+            script{
+                getPomVersion(env.workspace + "/spring-boot-package-war/pom.xml")
+            }
+            sh 'env'
               sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${env.VERSION} .'
         }
     }
@@ -53,4 +55,9 @@ pipeline {
       slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
   }
+}
+def getPomVerion(pomPath) {
+    def matcher = readFile(pomPath) =~ '<version>(.+?)</version>'
+    echo matcher
+    //matcher ? matcher[0][1] : null
 }

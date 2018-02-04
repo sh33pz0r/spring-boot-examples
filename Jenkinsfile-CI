@@ -39,7 +39,7 @@ pipeline {
     }
     stage ('Build Docker Image') {
         steps {
-            sh 'sudo docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-0.0.1-SNAPSHOT.war -t sizgiyaev/spring-boot-example:01 .'
+            sh 'sudo docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${POM_VERSION} .'
         }
     }
   }

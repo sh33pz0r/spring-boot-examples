@@ -8,11 +8,8 @@ pipeline {
 //       maven 'Maven 3.3.9'
 //       jdk 'jdk8'
 //   }
-  agent { label 'docker-slave'
-      docker {
-          image 'maven:3.3.9-jdk-8'
-          args '-H tcp://172.31.35.217:2375'
-      }
+  agent {
+      label 'docker-slave'
   }
   stages {
     stage('Send Slack Notifcation') {
@@ -21,6 +18,12 @@ pipeline {
         }
     }
     stage('Verify') {
+      agent {
+          docker {
+              image 'maven:3.3.9-jdk-8'
+              args '-H tcp://172.31.35.217:2375'
+          }
+      }
       steps {
           dir("spring-boot-package-war"){
               sh 'echo $PATH'  

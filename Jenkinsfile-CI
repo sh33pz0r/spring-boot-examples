@@ -2,10 +2,7 @@ pipeline {
   environment {
     M3_HOME = "/usr/share/maven"
     M2_HOME = "/usr/share/maven"
-    dir("spring-boot-package-war"){
-        IMAGE = readMavenPom().getArtifactId()
-        VERSION = readMavenPom().getVersion()
-    }
+    VERSION = readMavenPom("spring-boot-package-war/pom.xml").getVersion()
   }
   agent { label 'slave' }
   tools {
@@ -42,8 +39,8 @@ pipeline {
     }
     stage ('Build Docker Image') {
         steps {
-            sh 'env'
-            sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${env.VERSION} .'
+              sh 'env'
+              sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${env.VERSION} .'
         }
     }
   }

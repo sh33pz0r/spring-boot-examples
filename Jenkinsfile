@@ -3,16 +3,10 @@ pipeline {
     M3_HOME = "/usr/share/maven"
     M2_HOME = "/usr/share/maven"
   }
-//   agent { label 'slave' }
-//   tools {
-//       maven 'Maven 3.3.9'
-//       jdk 'jdk8'
-//   }
-  agent { docker 'maven:3.5.2-jdk-8' }
-  post {
-    always {
-        slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-    }
+  agent { label 'slave' }
+  tools {
+      maven 'Maven 3.3.9'
+      jdk 'jdk8'
   }
   stages {
 

@@ -8,9 +8,7 @@ pipeline {
 //       maven 'Maven 3.3.9'
 //       jdk 'jdk8'
 //   }
-  agent {
-      label 'docker-slave'
-  }
+  agent { docker 'maven:3.5.2-jdk-8' }
   stages {
     stage('Send Slack Notifcation') {
         steps {
@@ -18,11 +16,6 @@ pipeline {
         }
     }
     stage('Verify') {
-      agent {
-          docker {
-              image 'maven:3.3.9-jdk-8'
-          }
-      }
       steps {
           dir("spring-boot-package-war"){
               sh 'echo $PATH'  
@@ -43,7 +36,7 @@ pipeline {
              junit 'target/surefire-reports/**/*.xml'
          }
       }
-    }
+     }
   }
   post {
     success {

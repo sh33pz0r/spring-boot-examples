@@ -11,33 +11,33 @@ pipeline {
       jdk 'jdk8'
   }
   stages {
-    // stage('Send Slack Notifcation') {
-    //     steps {
-    //         slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-    //     }
-    // }
-    // stage('Verify') {
-    //   steps {
-    //       dir("spring-boot-package-war"){
-    //           sh 'echo $PATH'  
-    //           sh 'mvn clean verify'
-    //       }
-    //   }
-    // }
-    // stage ('Build') {
-    //     steps {
-    //       dir("spring-boot-package-war"){
-    //         sh 'mvn clean install'
-    //       }
-    //     }
-    // }
- 	// stage ('Test') {
-    //   steps {
-    //      dir("spring-boot-package-war"){
-    //          junit 'target/surefire-reports/**/*.xml'
-    //      }
-    //   }
-    // }
+    stage('Send Slack Notifcation') {
+        steps {
+            slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        }
+    }
+    stage('Verify') {
+      steps {
+          dir("spring-boot-package-war"){
+              sh 'echo $PATH'  
+              sh 'mvn clean verify'
+          }
+      }
+    }
+    stage ('Build') {
+        steps {
+          dir("spring-boot-package-war"){
+            sh 'mvn clean install'
+          }
+        }
+    }
+ 	stage ('Test') {
+      steps {
+         dir("spring-boot-package-war"){
+             junit 'target/surefire-reports/**/*.xml'
+         }
+      }
+    }
     stage ('Build Docker Image') {
         steps {
             script {
@@ -46,6 +46,11 @@ pipeline {
                   tag = pom.version.replace("-SNAPSHOT", "")
             }
             sh "docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${pomVersion}.war -t sizgiyaev/spring-boot-example:${tag} ."
+        }
+    }
+    stage ('Push Docker Image') {
+        steps {
+            sh "docker push sizgiyaev/spring-boot-example:${tag}"
         }
     }
   }

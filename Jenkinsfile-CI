@@ -43,7 +43,7 @@ pipeline {
             script {
                   def pom = readMavenPom file: 'spring-boot-package-war/pom.xml'
                   pomVersion = pom.version
-                  tag = pom.version.replace("-SNAPSHOT")
+                  tag = pom.version.replace("-SNAPSHOT", "")
             }
             sh "docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${pomVersion}.war -t sizgiyaev/spring-boot-example:${tag} ."
         }

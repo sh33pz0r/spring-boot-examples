@@ -43,7 +43,7 @@ pipeline {
                   echo pom.version
             }
             sh 'env'
-            sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${env.VERSION} .'
+            sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${pom.version}.war -t sizgiyaev/spring-boot-example:${pom.version} .'
         }
     }
   }

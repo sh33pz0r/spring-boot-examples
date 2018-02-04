@@ -8,8 +8,12 @@ pipeline {
       maven 'Maven 3.3.9'
       jdk 'jdk8'
   }
+  environment {
+    //Use Pipeline Utility Steps plugin to read information from pom.xml into env variables
+    IMAGE = readMavenPom().getArtifactId()
+    VERSION = readMavenPom().getVersion()
+  }
   stages {
-
     // stage('Send Slack Notifcation') {
     //     steps {
     //         slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
@@ -40,11 +44,8 @@ pipeline {
     stage ('Build Docker Image') {
         steps {
           dir("spring-boot-package-war")
-            script {
-                def pom = readMavenPom file: 'pom.xml'
-                def version = pom.version.replace("-SNAPSHOT", ".${currentBuild.number}")  
-            }
-            sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${pom.version} .'
+            sh 'env'
+            sh 'docker build --build-arg WAR_FILE=spring-boot-package-war/target/spring-boot-package-war-${POM_VERSION}.war -t sizgiyaev/spring-boot-example:${env.VERSION} .'
         }
     }
   }

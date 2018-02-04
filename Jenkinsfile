@@ -3,7 +3,7 @@ pipeline {
     M3_HOME = "/usr/share/maven"
     M2_HOME = "/usr/share/maven"
   }
-  agent docker-slave
+  agent { label 'docker' }
   tools {
       maven 'Maven 3.3.9'
       jdk 'jdk8'

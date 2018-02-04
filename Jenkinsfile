@@ -8,7 +8,11 @@ pipeline {
 //       maven 'Maven 3.3.9'
 //       jdk 'jdk8'
 //   }
-  agent { docker 'maven:3.5.2-jdk-8' }
+  agent { 
+      docker {
+          image 'maven:3.3.9-jdk-8'
+          args '-H=172.31.35.217:2375'
+      }
   stages {
     stage('Send Slack Notifcation') {
         steps {

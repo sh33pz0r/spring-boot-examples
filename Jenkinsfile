@@ -9,12 +9,13 @@ pipeline {
 //       jdk 'jdk8'
 //   }
   agent { docker 'maven:3.5.2-jdk-8' }
-  stages {
   post {
     always {
         slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
   }
+  stages {
+
     // stage('Send Slack Notifcation') {
     //     steps {
     //         slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")

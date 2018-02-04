@@ -1,1 +1,16 @@
-
+pipeline {
+    agent { label 'slave' }
+    stages {
+        stage('Checkout SCM') {
+           steps {
+               checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/sizgiyaev/spring-boot-examples.git']]])
+           }
+        }
+        
+        stage('Deploy to Swarm Cluster') {
+            steps {
+                sh 'docker -H=$swarm_master stack deploy --compose-file swarm/spring-boot-example.yml sprint-boot-example'
+            }
+        }
+    }
+}

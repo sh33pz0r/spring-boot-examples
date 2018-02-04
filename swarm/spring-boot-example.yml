@@ -2,7 +2,7 @@
 version: '3.2'
 
 services:
-    jenkins-master:
+    spring-boot-example:
         image: sizgiyaev/spring-boot-example:0.0.1
         networks:
             - traefik-net
